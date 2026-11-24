@@ -1,0 +1,14 @@
+{
+  "app_id": "luckfox-config",
+  "version": "v0.0.4-ota-preview.1",
+  "platform": "linux-arm64",
+  "download_url": "https://mili-zlm.github.io/luckfox-config-ota/releases/v0.0.4-ota-preview.1/luckfox-config-arm64",
+  "fallback_urls": [
+    "https://raw.githubusercontent.com/Mili-zlm/luckfox-config-ota/main/releases/v0.0.4-ota-preview.1/luckfox-config-arm64"
+  ],
+  "size": 4718776,
+  "sha256": "5e9f22b8e0d3767ca011c68cc0dccfb34385b16ab48cc7965af624008761d343",
+  "change_log": {
+    "zh": "OTA发布链路预览版；当前仅完成模块、版本和清单准备，尚未接入TUI更新菜单、网络下载或安装功能。"
+  }
+}
