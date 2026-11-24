@@ -1,0 +1,14 @@
+{
+  "app_id": "luckfox-config",
+  "version": "v0.0.4-ota-preview.1",
+  "platform": "linux-arm64",
+  "download_url": "https://mili-zlm.github.io/luckfox-config-ota/releases/v0.0.4-ota-preview.1/luckfox-config-arm64",
+  "fallback_urls": [
+    "https://raw.githubusercontent.com/Mili-zlm/luckfox-config-ota/main/releases/v0.0.4-ota-preview.1/luckfox-config-arm64"
+  ],
+  "size": 8257720,
+  "sha256": "5f149eee314d0c4b1a68fdd75c98a5ebefefe5266defa026725dbc1dcba2226f",
+  "change_log": {
+    "zh": "支持TUI手动检查、下载校验及确认安装；新增慢速链路超时策略、旧版备份和原子替换失败恢复。只更新luckfox-config二进制，不修改原配置，不执行load。安装后退出并重新运行。手动回滚菜单尚未接入。"
+  }
+}

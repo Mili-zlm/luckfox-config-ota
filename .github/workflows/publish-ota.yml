@@ -1,0 +1,66 @@
+name: Publish verified OTA payload
+on:
+  push:
+    branches: [main]
+    paths: ['.ota-upload/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: ota-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble and verify both binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d .ota-upload/payload
+          release=releases/v0.0.4-ota-preview.1
+          mkdir -p ".ota-upload/payload/$release"
+          cat .ota-upload/arm/*.part > ".ota-upload/payload/$release/luckfox-config-arm"
+          cat .ota-upload/arm64/*.part > ".ota-upload/payload/$release/luckfox-config-arm64"
+          python3 - <<'PY'
+          import hashlib, json, pathlib, struct
+          root = pathlib.Path(".ota-upload/payload")
+          for platform, binary, machine in [("armv7", "arm", 40), ("arm64", "arm64", 183)]:
+              manifest = json.loads((root / platform / "latest.json").read_text())
+              data = (root / "releases/v0.0.4-ota-preview.1" / ("luckfox-config-" + binary)).read_bytes()
+              assert manifest["version"] == "v0.0.4-ota-preview.1"
+              assert len(data) == manifest["size"], platform + ": size mismatch"
+              assert hashlib.sha256(data).hexdigest() == manifest["sha256"], platform + ": SHA256 mismatch"
+              assert data[:4] == b"\x7fELF" and data[5] == 1
+              assert struct.unpack_from("<H", data, 18)[0] == machine, platform + ": architecture mismatch"
+              archived = root / "releases/v0.0.4-ota-preview.1" / (platform + ".json")
+              assert json.loads(archived.read_text()) == manifest
+              print(platform, len(data), manifest["sha256"])
+          PY
+          cp -a .ota-upload/payload/. .
+          chmod 755 "$release/luckfox-config-arm" "$release/luckfox-config-arm64"
+          git rm -r -- .ota-upload
+          git add -- armv7/latest.json arm64/latest.json "$release" index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh v0.0.4-ota-preview.1 with verified OTA install binaries"
+          git push origin HEAD:main
+      - name: Prepare site
+        shell: bash
+        run: |
+          mkdir _site
+          git archive HEAD | tar -x -C _site
+          rm -rf _site/.github
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
