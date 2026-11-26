@@ -1,0 +1,14 @@
+{
+  "app_id": "luckfox-config",
+  "version": "v0.0.5-ota-preview.1",
+  "platform": "linux-armv7",
+  "download_url": "https://mili-zlm.github.io/luckfox-config-ota/releases/v0.0.5-ota-preview.1/luckfox-config-arm",
+  "fallback_urls": [
+    "https://raw.githubusercontent.com/Mili-zlm/luckfox-config-ota/main/releases/v0.0.5-ota-preview.1/luckfox-config-arm"
+  ],
+  "size": 8519864,
+  "sha256": "6f3868ca0fa22579c8e49fd6f71dffe02345f0080fb5c4e3e9ebb8c1cfdd90df",
+  "change_log": {
+    "zh": "新增TUI手动回滚功能，支持本地备份校验、原子恢复及中断操作恢复。只更新程序，不修改硬件配置。"
+  }
+}
